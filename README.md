@@ -12,3 +12,7 @@ Also you can wath info on **TMDB** site, and watch trailers on **YouTube**.
 
 
 Run **app.py** for using this Bot 
+
+**[Telegram link](https://t.me/IFITWILLWORKILEAVETHISNAMEOFBOT)**
+
+![preview](preview.gif)
