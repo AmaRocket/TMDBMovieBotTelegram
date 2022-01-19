@@ -1,3 +1,5 @@
+<img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/31?style=plastic">
+
 # TMDBMovieBotTelegram
 Powered by **aiogram**, **TMDB API** and **tmdbv3api** libary.
 
