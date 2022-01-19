@@ -1,6 +1,5 @@
 import logging
 
-import aiogram
 import aiogram.utils.markdown as md
 
 import requests
@@ -8,10 +7,9 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 
-import tmdb_api
 from TEST_TMDB_PIPY import popular_movie, find_by_name
 from config import api_key
-from keyboards.default import menu
+
 from keyboards.default.menu import genres, vote_average, criteria, totalkb
 from keyboards.inline.choise_buttons import popular_movie_buttons, menu_, title_movie_buttons, total_keyboard, \
     result_keyboard, title_keyboard
@@ -23,8 +21,10 @@ from aiogram.dispatcher.filters import Command, Text
 import asyncio
 from aiogram.types import ChatActions
 
+
 class Form1(StatesGroup):
     title = State()
+
 
 class Form(StatesGroup):
     genre = State()
@@ -39,10 +39,9 @@ async def start_menu(message: Message):
     await bot.send_chat_action(message.chat.id, ChatActions.TYPING)
     await asyncio.sleep(1)
 
-    await message.reply('Select From Menu', reply_markup=menu_())
+    await message.reply('Select Your Option From Menu', reply_markup=menu_())
 
 
-# Work!
 # List Of Popular Movies
 @dp.callback_query_handler(Text(startswith='popular'))
 async def poppular_by(callback: types.CallbackQuery):
@@ -74,18 +73,13 @@ async def poppular_by(callback: types.CallbackQuery):
         reply_markup=popular_movie_buttons(first, len(popular_list), original_name, id))
 
 
-
 @dp.callback_query_handler(Text(startswith='title'))
 async def choose_option(callback: types.CallbackQuery):
-
     # For "typing" message in top console
     await bot.send_chat_action(callback.message.chat.id, ChatActions.TYPING)
     await asyncio.sleep(1)
     await Form1.title.set()
-    await callback.message.answer('Enter Title:')
-
-
-
+    await callback.message.answer('Enter Title Of Film:')
 
 
 @dp.message_handler(state=Form1.title)
@@ -103,15 +97,13 @@ async def find_by_title(message: types.Message, state: FSMContext):
         )
 
 
-@dp.callback_query_handler(Text(startswith='find'), state=Form.year)
-async def total(callback: types.CallbackQuery, state: FSMContext):
+@dp.callback_query_handler(Text(startswith='find'), state=Form1.title)
+async def title(callback: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         first = int(callback['data'].replace('find_', ''))
-
         name = data['title']
         movie_list = find_by_name(name)
-        await (movie_list)
-
+        print(movie_list)
 
         id = movie_list[first]['id']
         genre_ids = movie_list[first]['genre_ids']
@@ -134,23 +126,14 @@ async def total(callback: types.CallbackQuery, state: FSMContext):
         await asyncio.sleep(1)
 
         await callback.message.edit_text(text=text_value)
-        await callback.message.edit_reply_markup(reply_markup=title_movie_buttons(first, len(movie_list)))
+        await callback.message.edit_reply_markup(
+            reply_markup=title_movie_buttons(first, len(movie_list), original_name, id))
 
 
-
-
-
-
-
-# @dp.callback_query_handler(Text(startswith='menu'))
-# async def show_menu(callback: types.CallbackQuery):
-#     # For "typing" message in top console
-#     await bot.send_chat_action(callback.message.chat.id, ChatActions.TYPING)
-#     await asyncio.sleep(1)
-#
-#     await callback.message.reply('Choose an option for movie from the menu: \n'
-#                                  'Genre > Vote Average > Year',
-#                                  reply_markup=criteria)
+@dp.callback_query_handler(Text(startswith='finish'), state=Form1)
+async def passing(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer(text="Thnx For Using This Bot 🤖!")
+    await state.finish()
 
 
 # You can use state '*' if you need to handle all states
@@ -176,7 +159,6 @@ async def cancel_handler(message: types.Message, state: FSMContext):
     await message.reply('Cancelled.', reply_markup=types.ReplyKeyboardRemove())
 
 
-
 @dp.callback_query_handler(Text(startswith='criteria'))
 async def choose_option(callback: types.CallbackQuery):
     # For "typing" message in top console
@@ -184,7 +166,7 @@ async def choose_option(callback: types.CallbackQuery):
     await asyncio.sleep(1)
     await Form.genre.set()
     await callback.message.answer('Choose Genre:',
-                        reply_markup=genres)
+                                  reply_markup=genres)
 
 
 @dp.message_handler(state=Form.genre)
@@ -201,7 +183,7 @@ async def process_genre(message: types.Message, state: FSMContext):
 
     await Form.next()
     await message.answer('Enter Vote Average: ',
-                        reply_markup=vote_average)
+                         reply_markup=vote_average)
 
 
 @dp.message_handler(lambda message: not message.text.isdigit(), state=Form.voteaverage)
