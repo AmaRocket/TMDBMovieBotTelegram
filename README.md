@@ -8,7 +8,7 @@ This Telegram Bot can help to find movies by criteria as like:
 
 You can find info about popular films on **TMDB**. This list refreshes every day.
 
-Also you can wath info on **TMDB** site, and watch trailers on **YouTube**.
+Also, you can watch info on **TMDB** site, and watch trailers on **YouTube**.
 
 
 Run **app.py** for using this Bot 

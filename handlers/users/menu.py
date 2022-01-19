@@ -257,7 +257,7 @@ async def total(callback: types.CallbackQuery, state: FSMContext):
         print(len(data))
 
         id = data['results'][first]['id']
-        genre_ids = data['results'][first]['genre_ids']
+        # genre_ids = data['results'][first]['genre_ids']
         original_name = data['results'][first]['original_title']
         original_language = data['results'][first]['original_language']
         overview = data['results'][first]['overview']
