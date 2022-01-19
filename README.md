@@ -16,7 +16,7 @@ Also, you can watch info on **TMDB** site, and watch trailers on **YouTube**.
 
 - Run **app.py** for using this Bot 
 - All configurations in file **config.py**
-- Tokens and Keys are stored in a file **.env**
+- Tokens and Keys for **configurations** are stored in a file **.env**
 
 **[Telegram link](https://t.me/IFITWILLWORKILEAVETHISNAMEOFBOT)**
 
