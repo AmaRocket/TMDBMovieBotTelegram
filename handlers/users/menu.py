@@ -10,12 +10,13 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from TEST_TMDB_PIPY import popular_movie, find_by_name
 from config import api_key
 
-from keyboards.default.menu import genres, vote_average, criteria, totalkb
+
+from keyboards.default import genres, vote_average
 from keyboards.inline.choise_buttons import popular_movie_buttons, menu_, title_movie_buttons, total_keyboard, \
     result_keyboard, title_keyboard
 from loader import dp, bot
-from aiogram.types import Message, ReplyKeyboardRemove, ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
-# from keyboards.default import menu
+from aiogram.types import Message, ParseMode
+
 from aiogram.dispatcher.filters import Command, Text
 
 import asyncio

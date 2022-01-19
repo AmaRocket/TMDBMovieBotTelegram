@@ -1,20 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-
-# Start buttons
-menu = ReplyKeyboardMarkup(
-    keyboard=[
-        [
-            # KeyboardButton(text='Popular Movies'),
-            KeyboardButton(text='Criteria'),
-            KeyboardButton(text='Find By Title')
-        ],
-    ],
-    resize_keyboard=True,
-    one_time_keyboard=True
-)
-
-
 # buttons for criteria choose
 criteria = ReplyKeyboardMarkup(
     keyboard=[
@@ -57,7 +42,7 @@ genres = ReplyKeyboardMarkup(
             KeyboardButton(text='Mystery, 9648'),
             KeyboardButton(text='Romance, 10749'),
             KeyboardButton(text='Science Fiction, 878')
-         ],
+        ],
         [
 
             KeyboardButton(text='TV Movie, 10770'),
