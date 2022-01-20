@@ -10,7 +10,6 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from TEST_TMDB_PIPY import popular_movie, find_by_name
 from config import api_key
 
-
 from keyboards.default import genres, vote_average
 from keyboards.inline.choise_buttons import popular_movie_buttons, menu_, title_movie_buttons, total_keyboard, \
     result_keyboard, title_keyboard
@@ -23,11 +22,11 @@ import asyncio
 from aiogram.types import ChatActions
 
 
-class Form1(StatesGroup):
+class FormTitle(StatesGroup):
     title = State()
 
 
-class Form(StatesGroup):
+class FormCriteria(StatesGroup):
     genre = State()
     voteaverage = State()
     year = State()
@@ -79,11 +78,11 @@ async def choose_option(callback: types.CallbackQuery):
     # For "typing" message in top console
     await bot.send_chat_action(callback.message.chat.id, ChatActions.TYPING)
     await asyncio.sleep(1)
-    await Form1.title.set()
+    await FormTitle.title.set()
     await callback.message.answer('Enter Title Of Film:')
 
 
-@dp.message_handler(state=Form1.title)
+@dp.message_handler(state=FormTitle.title)
 async def find_by_title(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['title'] = message.text
@@ -98,7 +97,7 @@ async def find_by_title(message: types.Message, state: FSMContext):
         )
 
 
-@dp.callback_query_handler(Text(startswith='find'), state=Form1.title)
+@dp.callback_query_handler(Text(startswith='find'), state=FormTitle.title)
 async def title(callback: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         first = int(callback['data'].replace('find_', ''))
@@ -131,7 +130,7 @@ async def title(callback: types.CallbackQuery, state: FSMContext):
             reply_markup=title_movie_buttons(first, len(movie_list), original_name, id))
 
 
-@dp.callback_query_handler(Text(startswith='finish'), state=Form1)
+@dp.callback_query_handler(Text(startswith='finish'), state=FormTitle)
 async def passing(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer(text="Thnx For Using This Bot 🤖!")
     await state.finish()
@@ -154,7 +153,7 @@ async def cancel_handler(message: types.Message, state: FSMContext):
     await bot.send_chat_action(message.chat.id, ChatActions.TYPING)
     await asyncio.sleep(1)
 
-    # Cancel state and inform user about it
+    # Cancel state and inFormCriteria user about it
     await state.finish()
     # And remove keyboard (just in case)
     await message.reply('Cancelled.', reply_markup=types.ReplyKeyboardRemove())
@@ -165,12 +164,12 @@ async def choose_option(callback: types.CallbackQuery):
     # For "typing" message in top console
     await bot.send_chat_action(callback.message.chat.id, ChatActions.TYPING)
     await asyncio.sleep(1)
-    await Form.genre.set()
+    await FormCriteria.genre.set()
     await callback.message.answer('Choose Genre:',
                                   reply_markup=genres)
 
 
-@dp.message_handler(state=Form.genre)
+@dp.message_handler(state=FormCriteria.genre)
 async def process_genre(message: types.Message, state: FSMContext):
     """
     Process genre edit
@@ -182,12 +181,12 @@ async def process_genre(message: types.Message, state: FSMContext):
     await bot.send_chat_action(message.chat.id, ChatActions.TYPING)
     await asyncio.sleep(1)
 
-    await Form.next()
+    await FormCriteria.next()
     await message.answer('Enter Vote Average: ',
                          reply_markup=vote_average)
 
 
-@dp.message_handler(lambda message: not message.text.isdigit(), state=Form.voteaverage)
+@dp.message_handler(lambda message: not message.text.isdigit(), state=FormCriteria.voteaverage)
 async def process_vote_average_invalid(message: types.Message):
     """
     if vote average is invalid
@@ -195,19 +194,19 @@ async def process_vote_average_invalid(message: types.Message):
     return await message.answer('Vote average may be a number. \n Rate it! (digits only)')
 
 
-@dp.message_handler(lambda message: message.text.isdigit(), state=Form.voteaverage)
+@dp.message_handler(lambda message: message.text.isdigit(), state=FormCriteria.voteaverage)
 async def process_voteaverage(message: types.Message, state: FSMContext):
     # For "typing" message in top console
     await bot.send_chat_action(message.chat.id, ChatActions.TYPING)
     await asyncio.sleep(1)
 
     # Update state and data
-    await Form.next()
+    await FormCriteria.next()
     await state.update_data(voteaverage=int(message.text))
     await message.answer("What is the Year?", reply_markup=types.ReplyKeyboardRemove())
 
 
-@dp.message_handler(lambda message: not message.text.isdigit(), state=Form.year)
+@dp.message_handler(lambda message: not message.text.isdigit(), state=FormCriteria.year)
 async def process_year_invalid(message: types.Message):
     """
     if year is invalid
@@ -215,7 +214,7 @@ async def process_year_invalid(message: types.Message):
     return await message.reply('Year may be a number. \n Example: 1999 (digits only)')
 
 
-@dp.message_handler(state=Form.year)
+@dp.message_handler(state=FormCriteria.year)
 async def process_year(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['year'] = message.text
@@ -237,7 +236,7 @@ async def process_year(message: types.Message, state: FSMContext):
         )
 
 
-@dp.callback_query_handler(Text(startswith='total'), state=Form.year)
+@dp.callback_query_handler(Text(startswith='total'), state=FormCriteria.year)
 async def total(callback: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         first = int(callback['data'].replace('total_', ''))
@@ -281,7 +280,7 @@ async def total(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.edit_reply_markup(reply_markup=result_keyboard(first, len(data), original_name, id))
 
 
-@dp.callback_query_handler(Text(startswith='finish'), state=Form)
+@dp.callback_query_handler(Text(startswith='finish'), state=FormCriteria)
 async def passing(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer(text="Thnx For Using This Bot 🤖!")
     await state.finish()
